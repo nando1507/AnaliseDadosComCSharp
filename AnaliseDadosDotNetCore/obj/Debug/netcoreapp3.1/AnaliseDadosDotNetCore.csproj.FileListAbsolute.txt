@@ -1,0 +1,13 @@
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\bin\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.exe
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\bin\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.deps.json
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\bin\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.runtimeconfig.json
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\bin\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.runtimeconfig.dev.json
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\bin\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.dll
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\bin\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.pdb
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.csprojAssemblyReference.cache
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.AssemblyInfoInputs.cache
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.AssemblyInfo.cs
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.csproj.CoreCompileInputs.cache
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.dll
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.pdb
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\netcoreapp3.1\AnaliseDadosDotNetCore.genruntimeconfig.cache
