@@ -11,10 +11,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Threading;
 
 namespace AnaliseDadosDotNetCore
 {
-    class Program
+    class Program : WebClient
     {
 
         static void Main(string[] args)
@@ -22,31 +23,54 @@ namespace AnaliseDadosDotNetCore
             carregaSite();
         }
 
-        static void carregaSite()
+        protected override WebRequest GetWebRequest(Uri uri)
         {
+            WebRequest w = base.GetWebRequest(uri);
+            w.Timeout = 20 * 60 * 1000;
+            return w;
+        }
+
+        static async void carregaSite()
+        {
+            DateTime[] dt = new DateTime[2];
+            dt[0] = DateTime.Now;
+
+            Console.WriteLine($"{dt[0]}");
             string url = @"https://media.githubusercontent.com/media/microsoft/Bing-COVID-19-Data/master/data/Bing-COVID19-Data.csv";
 
             WebClient client = new WebClient();
-
             SqlConnection sqlconnection = new SqlConnection(@"Data Source = DESKTOP-JQKENAS; Initial Catalog = dbApi; Integrated Security = True");
             if (sqlconnection.State != ConnectionState.Open)
             {
                 sqlconnection.Open();
             }
+            SqlCommand trunc = new SqlCommand(@"Truncate Table TbCoronaVirus", sqlconnection);
+            trunc.ExecuteNonQuery();
             //var dados = client.OpenRead(url);
-            Stream myStream = client.OpenRead(url);
+            Uri uri = new Uri(url);
+            Stream myStream = client.OpenRead(uri);
+            Thread.Sleep(5000);
             Console.WriteLine("\nDisplaying Data :\n");
             StreamReader sr = new StreamReader(myStream);
+
+            //SqlBulkCopy sqlBulk = new SqlBulkCopy(sqlconnection);
+
+            //Dados dados = new Dados();
+            //DataTable dt = new DataTable(dados);
+            //dt.
+
+
             int Count = 0;
-            sr.ReadLine();
+
             while (!sr.EndOfStream)
             {
                 string[] linha = sr.ReadLine().Replace("'", "`").Split(',');
 
-                if (linha.Length == 15)
+                if (linha.Length == 15 && Char.IsNumber(linha[0][0]))
                 {
-                    Dados dados = new Dados();
-                    
+
+
+
                     string sql = string.Empty;
                     sql = $@"INSERT INTO dbo.TbCoronaVirus ( 
                                                             ID, 
@@ -106,9 +130,16 @@ namespace AnaliseDadosDotNetCore
                 }
                 Console.WriteLine(Count);
 
-                myStream.Close();
-                sr.Close();
             }
+
+            myStream.Close();
+            sr.Close();
+
+
+            dt[1] = DateTime.Now;
+
+            Console.WriteLine($"{dt[1]}");
+            Console.WriteLine($"{dt[1].Subtract(dt[0])}");
         }
     }
 }
