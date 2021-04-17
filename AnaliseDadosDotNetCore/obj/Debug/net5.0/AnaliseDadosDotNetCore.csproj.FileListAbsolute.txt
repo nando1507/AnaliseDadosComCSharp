@@ -86,3 +86,4 @@ C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\De
 C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\net5.0\AnaliseDadosDotNetCore.pdb
 C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\net5.0\AnaliseDadosDotNetCore.genruntimeconfig.cache
 C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\obj\Debug\net5.0\AnaliseDadosDotNetCore.csprojAssemblyReference.cache
+C:\Users\nando\source\repos\AnaliseDadosDotNetCore\AnaliseDadosDotNetCore\bin\Debug\net5.0\appsettings.json
