@@ -9,7 +9,6 @@ using System.Threading;
 using System.Globalization;
 using System.Configuration;
 using Microsoft.Extensions.Configuration;
-//using Microsoft.Extensions.Configuration.FileExtensions;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -27,43 +26,219 @@ namespace AnaliseDadosDotNetCore
 
         static void Main(string[] args)
         {
-            //Começo aplicação
             DateTime[] dt = new DateTime[2];
             dt[0] = DateTime.Now;
-            Console.WriteLine($"{dt[0]}");
-
+            Boolean continua = true;
             string url = @"https://media.githubusercontent.com/media/microsoft/Bing-COVID-19-Data/master/data/Bing-COVID19-Data.csv";
+            StreamReader sr = null;
+            List<TbCoronaVirus> lista = new List<TbCoronaVirus>();
+
+
+            DataTable dtable = null;
             conn();
-            //Função de Carga dos Dados
-            List<TbCoronaVirus> lstDados = listar(carregaSite(url));
-            DataTable dtable = ListToDataTable(lstDados);
 
-            if (LimpaTabela(sqlConnection))
-            {
-                gravaBanco(dtable);
-            }
+            //while (continua)
+            //{/              //Console.WriteLine("3. Criar DataTable");
+                //Console.WriteLine("4. Gravar Banco");
+                //Console.WriteLine("5. Listar em Tela");
+                //Console.WriteLine("0. Sair");
+                dt[0] = DateTime.Now;
+                tempo(dt);
 
-            var vetor = lstDados.Select(s => s.CountryRegion).Distinct().OrderBy(o => o).ToArray();
+                sr = carregaSite(url);
+                lista = listar(carregaSite(url));
+                dtable = ListToDataTable(listar(carregaSite(url)));
+                if (LimpaTabela(sqlConnection))
+                {
+                    gravaBanco(dtable);
+                }
+                ImprimeDados(lista);
+
+                dt[1] = DateTime.Now;
+                tempo(dt);
 
 
-            //var AtuDados;
-            //List<[ string, DateTime]> AtuDados = new List<[ string, DateTime]>();
-            //foreach (var item in vetor)
+            #region a
+            //int Option = 0;
+            //while (0 == Option)
             //{
-            //    string data = lstDados.Select(s => s.Updated).Where(w => w.Equals(item)).Max().ToString();//.Where(w => w.CountryRegion.Equals(item)).Max();
-
-            //    AtuDados.Add(item, data);
-
+            //    try
+            //    {
+            //        Option = int.Parse(Console.ReadLine());
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine("Deve ser digitado um valor numerico");
+            //        Option = int.Parse(Console.ReadLine());
+            //    }
             //}
 
-            dt[1] = DateTime.Now;
-            Console.WriteLine($"{dt[1]}");
-            Console.WriteLine($"{dt[1].Subtract(dt[0])}");
+            //switch (Option)
+            //{
+            //    case 1:
+            //        dt[0] = DateTime.Now;
+            //        tempo(dt);
+            //        sr = carregaSite(url);
+            //        continua = true;
+            //        dt[1] = DateTime.Now;
+            //        tempo(dt);
+            //        Console.ReadKey();
+            //        break;
+            //    case 2:
+            //        dt[0] = DateTime.Now;
+            //        tempo(dt);
+            //        if (sr == null)
+            //        {
+            //            lista = listar(carregaSite(url));
+            //        }
+            //        else
+            //        {
+            //            lista = listar(sr);
+            //        }
+            //        continua = true;
+            //        dt[1] = DateTime.Now;
+            //        tempo(dt);
+            //        Console.ReadKey();
+            //        break;
+            //    case 3:
+            //        dt[0] = DateTime.Now;
+            //        tempo(dt);
+            //        if (lista.Count == 0)
+            //        {
+            //            dtable = ListToDataTable(listar(carregaSite(url)));
+            //        }
+            //        else
+            //        {
+            //            dtable = ListToDataTable(lista);
+            //        }
+            //        continua = true;
+            //        dt[1] = DateTime.Now;
+            //        tempo(dt);
+            //        Console.ReadKey();
+            //        break;
+            //    case 4:
+            //        dt[0] = DateTime.Now;
+            //        tempo(dt);
+            //        if (dtable == null)
+            //        {
+            //            if (LimpaTabela(sqlConnection))
+            //            {
+            //                gravaBanco(ListToDataTable(listar(carregaSite(url))));
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (LimpaTabela(sqlConnection))
+            //            {
+            //                gravaBanco(dtable);
+            //            }
+            //        }
+            //        continua = true;
+            //        dt[1] = DateTime.Now;
+            //        tempo(dt);
+            //        Console.ReadKey();
+            //        break;
+            //    case 5:
+            //        dt[0] = DateTime.Now;
+            //        tempo(dt);
+            //        if (lista.Count == 0)
+            //        {
+            //            ImprimeDados(listar(carregaSite(url)));
+            //        }
+            //        else
+            //        {
+            //            ImprimeDados(lista);
+            //        }
+            //        continua = true;
+            //        dt[1] = DateTime.Now;
+            //        tempo(dt);
+            //        Console.ReadKey();
+            //        break;
+            //    default:
+            //        dt[0] = DateTime.Now;
+            //        tempo(dt);
+            //        continua = false;
+            //        dt[1] = DateTime.Now;
+            //        tempo(dt);
+            //        Console.ReadKey();
+            //        break;
+            //}
+
+            //}
+            #endregion
             Console.ReadKey();
         }
+        public static void tempo(DateTime[] dt)
+        {
+            //Console.Clear();
+            //Começo aplicação
 
+            if (!string.IsNullOrEmpty(dt[0].ToString()))
+            {
+                Console.WriteLine($"{dt[0]}");
+            }
+            if (!string.IsNullOrEmpty(dt[1].ToString()))
+            {
+                Console.WriteLine($"{dt[1]}");
+            }
+            if (!string.IsNullOrEmpty(dt[0].ToString()) && !string.IsNullOrEmpty(dt[1].ToString()))
+            {
+                Console.WriteLine($"{dt[1].Subtract(dt[0])}");
+            }
+
+        }
+        public static void ImprimeDados(List<TbCoronaVirus> lstDados)
+        {
+            //Console.Clear();
+            var vetor = lstDados.Select(s => s.CountryRegion).Distinct().OrderBy(o => o).ToArray();
+
+            var data = lstDados.Select(s => new { s.CountryRegion, s.Updated }).GroupBy(g => g.CountryRegion).ToList();
+
+            Dictionary<string, DateTime> dict = new Dictionary<string, DateTime>();
+            for (int i = 0; i < data.Count; i++)
+            {
+                dict.Add(
+                    data[i].Select(s => s.CountryRegion).FirstOrDefault(),
+                    data[i].Select(s => s.Updated).Max(m => m)
+                    );
+            }
+            //string data = lstDados.Select(s => s.Updated).Where(w => w.Equals(item)).Max().ToString();//.Where(w => w.CountryRegion.Equals(item)).Max();
+            List<TbCoronaVirus> dados = new List<TbCoronaVirus>();
+            TbCoronaVirus coronaVirus = new TbCoronaVirus();
+            foreach (var item in dict)
+            {
+                coronaVirus = lstDados.Where(w => w.CountryRegion.Contains(item.Key)).Where(w => w.Updated.Equals(item.Value)).OrderBy(O => O.Confirmed).FirstOrDefault();
+                dados.Add(coronaVirus);
+            }
+            Console.Clear();
+            Console.WriteLine("CountryRegion".PadRight(40, ' ') + " | " +
+                        "Deaths".PadLeft(20, ' ').Replace(",", ".") + " | " +
+                        "Confirmed".PadLeft(20, ' ').Replace(",", ".") + " | " +
+                        "Recovered".PadLeft(20, ' ').Replace(",", ".") + " | " +
+                        "Updated".PadRight(20, ' '));
+            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 120)));
+            Console.WriteLine("");
+            int perc = 0;
+            foreach (var item in dados.OrderByDescending(o => o.Confirmed))
+            {
+                perc++;
+                //ConsoleUtility.WriteProgressBar(dados.Count / perc, true);
+                CultureInfo cultureinfo = new CultureInfo("PT-BR");
+                int pad = 20;
+                Console.WriteLine(
+                        item.CountryRegion.PadRight(pad + pad, ' ') + " | " +
+                        item.Deaths.ToString("#,###").PadLeft(pad, ' ').Replace(",", ".") + " | " +
+                        item.Confirmed.ToString("#,###").PadLeft(pad, ' ').Replace(",", ".") + " | " +
+                        item.Recovered.ToString("#,###").PadLeft(pad, ' ').Replace(",", ".") + " | " +
+                        item.Updated.ToString("dd/MM/yyyy").PadRight(pad, ' ')
+                    );
+            }
+            Console.WriteLine("");
+            Console.WriteLine(string.Concat(Enumerable.Repeat("-", 120)));
+        }
         public static void conn()
         {
+            Console.Clear();
             ServiceCollection services = new ServiceCollection();
             IConfiguration config = new ConfigurationBuilder()
                         .AddJsonFile("appsettings.json", true, true)
@@ -73,9 +248,9 @@ namespace AnaliseDadosDotNetCore
 
             sqlConnection = config.GetConnectionString("DefaultConnection");
         }
-
         public static List<TbCoronaVirus> listar(StreamReader reader)
         {
+            Console.Clear();
             CultureInfo cultureinfo = new CultureInfo("en-us");
             List<TbCoronaVirus> lst = new List<TbCoronaVirus>();
             int index = 1;
@@ -98,8 +273,8 @@ namespace AnaliseDadosDotNetCore
                     dados.DeathsChange = long.TryParse(linha[5]?.Trim(), out inumber) ? inumber : 0;
                     dados.Recovered = long.TryParse(linha[6]?.Trim(), out inumber) ? inumber : 0;
                     dados.RecoveredChange = long.TryParse(linha[7]?.Trim(), out inumber) ? inumber : 0;
-                    dados.Latitude = decimal.TryParse(linha[8]?.Trim(), out fnumber) ? fnumber : 0;
-                    dados.Longitude = decimal.TryParse(linha[9]?.Trim(), out fnumber) ? fnumber : 0;
+                    dados.Latitude = decimal.TryParse(linha[8]?.Trim().Replace(".",","), out fnumber) ? fnumber : 0;
+                    dados.Longitude = decimal.TryParse(linha[9]?.Trim().Replace(".", ","), out fnumber) ? fnumber : 0;
                     dados.Iso2 = linha[10]?.Trim();
                     dados.Iso3 = linha[11]?.Trim();
                     dados.CountryRegion = linha[12]?.Trim();
@@ -114,9 +289,9 @@ namespace AnaliseDadosDotNetCore
             Console.WriteLine($@"Foram localizados {string.Format(lst.Count.ToString(), "C")} Registros no arquivo");
             return lst;
         }
-
         public static void gravaBanco(DataTable dtreader)
         {
+            Console.Clear();
             //Começo da Carga
             DateTime[] dt = new DateTime[2];
             dt[0] = DateTime.Now;
@@ -138,9 +313,9 @@ namespace AnaliseDadosDotNetCore
             Console.WriteLine($"{dt[1]}");
             Console.WriteLine($"{dt[1].Subtract(dt[0])}");
         }
-
         public static Boolean LimpaTabela(string cn)
         {
+            Console.Clear();
             Boolean status = false;
             try
             {
@@ -161,9 +336,9 @@ namespace AnaliseDadosDotNetCore
             }
             return status;
         }
-
         public static DataTable ListToDataTable<T>(List<T> list)
         {
+            Console.Clear();
             DataTable dt = new DataTable();
 
             foreach (PropertyInfo info in typeof(T).GetProperties())
@@ -181,14 +356,14 @@ namespace AnaliseDadosDotNetCore
             }
             return dt;
         }
-
         static StreamReader carregaSite(string url)
         {
+            Console.Clear();
             WebClient client = new WebClient();
             Uri uri = new Uri(url);
             Stream myStream = client.OpenRead(uri);
             Thread.Sleep(5000);
-            Console.WriteLine("Exibe Dados: ");
+            Console.WriteLine("Acessa o Site");
             StreamReader sr = new StreamReader(myStream, Encoding.UTF8);
             return sr;
         }
