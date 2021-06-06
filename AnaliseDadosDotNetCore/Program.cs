@@ -23,40 +23,85 @@ namespace AnaliseDadosDotNetCore
     {
         public readonly DbContext _context;
         public static string sqlConnection;
+        public static string nmTabela = "TbCoronaVirus";
+
 
         static void Main(string[] args)
         {
-            DateTime[] dt = new DateTime[2];
-            dt[0] = DateTime.Now;
+
+            Data dtExec = new Data();
+            dtExec.DtIni = DateTime.Now;
+            Console.WriteLine("Inicio Execução: " + dtExec.rDtIni());
             Boolean continua = true;
             string url = @"https://media.githubusercontent.com/media/microsoft/Bing-COVID-19-Data/master/data/Bing-COVID19-Data.csv";
             StreamReader sr = null;
             List<TbCoronaVirus> lista = new List<TbCoronaVirus>();
-
-
             DataTable dtable = null;
             conn();
 
-            //while (continua)
-            //{/              //Console.WriteLine("3. Criar DataTable");
-                //Console.WriteLine("4. Gravar Banco");
-                //Console.WriteLine("5. Listar em Tela");
-                //Console.WriteLine("0. Sair");
-                dt[0] = DateTime.Now;
-                tempo(dt);
+            #region Carrega Site
+            Data dtSite = new Data();
+            dtSite.DtIni = DateTime.Now;
+            Console.WriteLine("Inicio Carrega Site: " + dtSite.rDtIni());
+            sr = carregaSite(url);
+            dtSite.DtFim = DateTime.Now;
+            Console.WriteLine("Fim Carrega Site: " + dtSite.rDtFim());
+            Console.WriteLine(dtSite.tempo());
+            #endregion
 
-                sr = carregaSite(url);
-                lista = listar(carregaSite(url));
-                dtable = ListToDataTable(listar(carregaSite(url)));
-                if (LimpaTabela(sqlConnection))
-                {
-                    gravaBanco(dtable);
-                }
-                ImprimeDados(lista);
+            #region Lista
+            Data dtLista = new Data();
+            dtLista.DtIni = DateTime.Now;
+            Console.WriteLine("Inicio carrega Lista: " + dtLista.rDtIni());
+            lista = listar(sr);
+            dtLista.DtFim = DateTime.Now;
+            Console.WriteLine("Fim carrega Lista: " + dtLista.rDtFim());
+            Console.WriteLine(dtLista.tempo());
+            #endregion
 
-                dt[1] = DateTime.Now;
-                tempo(dt);
+            #region DataTable
+            Data dtTable = new Data();
+            dtTable.DtIni = DateTime.Now;
+            Console.WriteLine("Inicio carrega tabela de dados: " + dtTable.rDtIni());
+            dtable = ListToDataTable(lista);
+            dtable.TableName = nmTabela;
+            dtTable.DtFim = DateTime.Now;
+            Console.WriteLine("Fim carrega tabela de dados: " + dtTable.rDtFim());
+            Console.WriteLine(dtTable.tempo());
+            #endregion
 
+            #region Carga Banco
+
+            Data DtTruncate = new Data();
+
+            DtTruncate.DtIni = DateTime.Now;
+            Console.WriteLine("Inicio Limpa tabela: " + DtTruncate.rDtIni());
+            if (LimpaTabela(sqlConnection))
+            {
+                DtTruncate.DtFim = DateTime.Now;
+                Console.WriteLine("Fim Limpa tabela: " + DtTruncate.rDtFim());
+                Console.WriteLine(DtTruncate.tempo());
+
+
+                Data DtCarga = new Data();
+                DtCarga.DtIni = DateTime.Now;
+                Console.WriteLine("Inicio Carga dados Banco: " + DtCarga.rDtIni());
+                gravaBanco(dtable);
+                DtCarga.DtFim = DateTime.Now;
+                Console.WriteLine("Fim Carga dados banco: " + DtCarga.rDtFim());
+                Console.WriteLine(DtCarga.tempo());
+            }
+            #endregion
+
+            #region imprime Dados
+            Data DtImprime = new Data();
+            DtImprime.DtIni = DateTime.Now;
+            Console.WriteLine("Imprime ultima data na tela: " + DtImprime.rDtIni());
+            ImprimeDados(lista);
+            DtImprime.DtFim = DateTime.Now;
+            Console.WriteLine("Finaliza execução e calcula tempo levado: " + DtImprime.rDtFim());
+            Console.WriteLine(DtImprime.tempo());
+            #endregion
 
             #region a
             //int Option = 0;
@@ -166,26 +211,11 @@ namespace AnaliseDadosDotNetCore
 
             //}
             #endregion
+            dtExec.DtFim = DateTime.Now;
+            Console.WriteLine("Fim Execução: " + dtExec.rDtFim());
+            Console.WriteLine(dtExec.tempo());
+            Console.WriteLine();
             Console.ReadKey();
-        }
-        public static void tempo(DateTime[] dt)
-        {
-            //Console.Clear();
-            //Começo aplicação
-
-            if (!string.IsNullOrEmpty(dt[0].ToString()))
-            {
-                Console.WriteLine($"{dt[0]}");
-            }
-            if (!string.IsNullOrEmpty(dt[1].ToString()))
-            {
-                Console.WriteLine($"{dt[1]}");
-            }
-            if (!string.IsNullOrEmpty(dt[0].ToString()) && !string.IsNullOrEmpty(dt[1].ToString()))
-            {
-                Console.WriteLine($"{dt[1].Subtract(dt[0])}");
-            }
-
         }
         public static void ImprimeDados(List<TbCoronaVirus> lstDados)
         {
@@ -210,7 +240,7 @@ namespace AnaliseDadosDotNetCore
                 coronaVirus = lstDados.Where(w => w.CountryRegion.Contains(item.Key)).Where(w => w.Updated.Equals(item.Value)).OrderBy(O => O.Confirmed).FirstOrDefault();
                 dados.Add(coronaVirus);
             }
-            Console.Clear();
+            // Console.Clear();
             Console.WriteLine("CountryRegion".PadRight(40, ' ') + " | " +
                         "Deaths".PadLeft(20, ' ').Replace(",", ".") + " | " +
                         "Confirmed".PadLeft(20, ' ').Replace(",", ".") + " | " +
@@ -235,10 +265,11 @@ namespace AnaliseDadosDotNetCore
             }
             Console.WriteLine("");
             Console.WriteLine(string.Concat(Enumerable.Repeat("-", 120)));
+            Console.WriteLine("");
         }
         public static void conn()
         {
-            Console.Clear();
+            // Console.Clear();
             ServiceCollection services = new ServiceCollection();
             IConfiguration config = new ConfigurationBuilder()
                         .AddJsonFile("appsettings.json", true, true)
@@ -250,7 +281,7 @@ namespace AnaliseDadosDotNetCore
         }
         public static List<TbCoronaVirus> listar(StreamReader reader)
         {
-            Console.Clear();
+            // Console.Clear();
             CultureInfo cultureinfo = new CultureInfo("en-us");
             List<TbCoronaVirus> lst = new List<TbCoronaVirus>();
             int index = 1;
@@ -273,7 +304,7 @@ namespace AnaliseDadosDotNetCore
                     dados.DeathsChange = long.TryParse(linha[5]?.Trim(), out inumber) ? inumber : 0;
                     dados.Recovered = long.TryParse(linha[6]?.Trim(), out inumber) ? inumber : 0;
                     dados.RecoveredChange = long.TryParse(linha[7]?.Trim(), out inumber) ? inumber : 0;
-                    dados.Latitude = decimal.TryParse(linha[8]?.Trim().Replace(".",","), out fnumber) ? fnumber : 0;
+                    dados.Latitude = decimal.TryParse(linha[8]?.Trim().Replace(".", ","), out fnumber) ? fnumber : 0;
                     dados.Longitude = decimal.TryParse(linha[9]?.Trim().Replace(".", ","), out fnumber) ? fnumber : 0;
                     dados.Iso2 = linha[10]?.Trim();
                     dados.Iso3 = linha[11]?.Trim();
@@ -291,7 +322,7 @@ namespace AnaliseDadosDotNetCore
         }
         public static void gravaBanco(DataTable dtreader)
         {
-            Console.Clear();
+            // Console.Clear();
             //Começo da Carga
             DateTime[] dt = new DateTime[2];
             dt[0] = DateTime.Now;
@@ -315,7 +346,7 @@ namespace AnaliseDadosDotNetCore
         }
         public static Boolean LimpaTabela(string cn)
         {
-            Console.Clear();
+            // Console.Clear();
             Boolean status = false;
             try
             {
@@ -338,7 +369,7 @@ namespace AnaliseDadosDotNetCore
         }
         public static DataTable ListToDataTable<T>(List<T> list)
         {
-            Console.Clear();
+            // Console.Clear();
             DataTable dt = new DataTable();
 
             foreach (PropertyInfo info in typeof(T).GetProperties())
@@ -358,7 +389,7 @@ namespace AnaliseDadosDotNetCore
         }
         static StreamReader carregaSite(string url)
         {
-            Console.Clear();
+            // Console.Clear();
             WebClient client = new WebClient();
             Uri uri = new Uri(url);
             Stream myStream = client.OpenRead(uri);
